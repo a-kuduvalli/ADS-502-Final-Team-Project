@@ -43,8 +43,27 @@ Contact:
 The dataset is sourced from Kaggle (the Spaceship Titanic competition), containing about 8,700 training records and 4,300 training test records. There are 13 independent variables, including passenger information (`PassengerID`, `Name`, `Age`, `HomePlanet`, `Destination`), `CryoSleep`, `Cabin`, and voyage spending (`VIP`, `RoomService`, `FoodCourt`, `ShoppingMall`, `Spa`, `VRDeck`). The target variable is the boolean attribute `PassengerId`, indicating whether a passenger was transported or not. 
 
 ### Pre-processing
-- Cryosleep status 
-- Median (numerical variables) and mode (categorical variables) imputation was used for the remaining null values
+- All passengers with a `CryoSleep` value of 'True' were assigned 0 for all amenities
+- All passengers with no spending in amenities were assigned 'True' in `Cryosleep`
+- Median (numerical variables) and mode (categorical variables) imputation for the remaining null values
 - `Cabin` was split into `Deck`, `CabinNumber`, and `Side`
 - Categorical variables were one-hot encoded
-- StandardScaler used to 
+- StandardScaler used to standardize the data
+
+### Modelling
+- Feature selection done manually, using results from decision-tree based importance bar graph and correlation heatmap
+- Classifiers: CART, C5.0, Logistic Regression, Naïve Bayes, Random Forest
+- Models evaluated using ______
+
+Challenges faced: Grouping one-hot encoded dummy variables into original features for feature importance bar graph, interpreting results of dummy variables
+
+## License
+[Attribution 4.0 International (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/)
+
+## Acknowledgements
+- Professor An Tran, University of San Diego
+- ADS-502: Fundamentals of Data Science, University of San Diego
+- Kaggle - Spaceship Titanic competition dataset
+
+
+
