@@ -40,3 +40,11 @@ Contact:
 - pandas, numpy, matplotlib, scikit-learn, statsmodels
 
 ## Project Description
+The dataset is sourced from Kaggle (the Spaceship Titanic competition), containing about 8,700 training records and 4,300 training test records. There are 13 independent variables, including passenger information (`PassengerID`, `Name`, `Age`, `HomePlanet`, `Destination`), `CryoSleep`, `Cabin`, and voyage spending (`VIP`, `RoomService`, `FoodCourt`, `ShoppingMall`, `Spa`, `VRDeck`). The target variable is the boolean attribute `PassengerId`, indicating whether a passenger was transported or not. 
+
+### Pre-processing
+- Cryosleep status 
+- Median (numerical variables) and mode (categorical variables) imputation was used for the remaining null values
+- `Cabin` was split into `Deck`, `CabinNumber`, and `Side`
+- Categorical variables were one-hot encoded
+- StandardScaler used to 
