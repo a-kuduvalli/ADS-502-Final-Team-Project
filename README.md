@@ -27,7 +27,7 @@ Contact:
 ### Methods Used
 - Data mining
 - Data cleaning
-- Feature engineering
+- Feature extraction
 - Data visualization
 - Predictive modeling
 - Machine learning
@@ -40,7 +40,7 @@ Contact:
 - pandas, numpy, matplotlib, scikit-learn, statsmodels
 
 ## Project Description
-The dataset is sourced from Kaggle (the Spaceship Titanic competition), containing about 8,700 training records and 4,300 training test records. There are 13 independent variables, including passenger information (`PassengerID`, `Name`, `Age`, `HomePlanet`, `Destination`), `CryoSleep`, `Cabin`, and voyage spending (`VIP`, `RoomService`, `FoodCourt`, `ShoppingMall`, `Spa`, `VRDeck`). The target variable is the boolean attribute `PassengerId`, indicating whether a passenger was transported or not. 
+The dataset is sourced from Kaggle (the Spaceship Titanic competition), containing 8,693 training records and 4,300 test records. There are 13 independent variables, including passenger information (`PassengerID`, `Name`, `Age`, `HomePlanet`, `Destination`), `CryoSleep`, `Cabin`, and voyage spending (`VIP`, `RoomService`, `FoodCourt`, `ShoppingMall`, `Spa`, `VRDeck`). The target variable is the boolean attribute `PassengerId`, indicating whether a passenger was transported or not. 
 
 ### Pre-processing
 - All passengers with a `CryoSleep` value of 'True' were assigned 0 for all amenities
