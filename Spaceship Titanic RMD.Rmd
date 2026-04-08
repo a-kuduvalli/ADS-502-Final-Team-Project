@@ -1,0 +1,405 @@
+---
+title: "ADS 502 Project"
+output: pdf_document
+date: "2026-04-01"
+---
+```{python}
+#Importing Python libraries
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import statsmodels.tools.tools as stattools
+import statsmodels.api as sm
+from sklearn.tree import DecisionTreeClassifier, export_graphviz
+from sklearn.model_selection import train_test_split
+import random
+from scipy import stats
+from statsmodels.stats.proportion import proportions_ztest
+from sklearn.metrics import confusion_matrix
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.preprocessing import StandardScaler
+import seaborn as sns
+
+```
+
+
+```{python}
+#Importing the spaceship titanic data set
+
+train = pd.read_csv("/Users/brodr105/USD MS ADS/ADS 502/Project/spaceship-titanic/train.csv")
+
+test = pd.read_csv("/Users/brodr105/USD MS ADS/ADS 502/Project/spaceship-titanic/test.csv")
+
+
+#Keeping a raw dataset for some of EDA
+raw_train = pd.read_csv("/Users/brodr105/USD MS ADS/ADS 502/Project/spaceship-titanic/train.csv")
+```
+
+
+```{python}
+#References for attribute meaning
+
+#PassengerId - A unique Id for each passenger. Each Id takes the form gggg_pp where gggg indicates a group the passenger is travelling with and pp is their number within the group. People in a group are often family members, but not always.
+
+#HomePlanet - The planet the passenger departed from, typically their planet of permanent residence.
+
+#CryoSleep - Indicates whether the passenger elected to be put into suspended animation for the duration of the voyage. Passengers in cryosleep are confined to their cabins.
+
+#Cabin - The cabin number where the passenger is staying. Takes the form deck/num/side, where side can be either P for Port or S for Starboard.
+
+#Destination - The planet the passenger will be debarking to.
+
+#Age - The age of the passenger.
+
+#VIP - Whether the passenger has paid for special VIP service during the voyage.
+
+#RoomService - Amount the passenger has billed for room service.
+
+#FoodCourt - Amount the passenger has billed at the food court.
+
+#ShoppingMall - Amount the passenger has billed at the shopping mall.
+
+#Spa - Amount the passenger has billed at the spa.
+
+#VRDeck - Amount the passenger has billed at the VR deck
+
+#Name - The first and last name of the passenger
+
+#Transported - Whether the passenger was transported to another dimension. This is the target, the column you are trying to predict.
+
+
+#test.csv - Personal records for the remaining one-third (~4300) of the passengers, to be used as test data. Your task is to predict the value of Transported for the passengers in this set.
+```
+
+```{python}
+train.head
+```
+
+
+```{python}
+#Number of rows and columns
+train.shape
+```
+
+```{python}
+train.info()
+```
+
+```{python}
+train.info
+```
+
+```{python}
+train['Transported'].value_counts()
+```
+
+```{python}
+classdistribution = train['Transported'].value_counts(normalize=True) * 100
+print(classdistribution.round(2).astype(str) + "%")
+```
+
+```{python}
+train.isnull().sum()
+```
+
+```{python}
+test.isnull().sum()
+```
+
+```{python}
+# Train
+cabin = train['Cabin'].str.split('/', expand=True)
+train['Deck'] = cabin[0]
+train['CabinNumber'] = pd.to_numeric(cabin[1], errors='coerce')
+train['Side'] = cabin[2]
+
+# Test
+cabin_test = test['Cabin'].str.split('/', expand=True)
+test['Deck'] = cabin_test[0]
+test['CabinNumber'] = pd.to_numeric(cabin_test[1], errors='coerce')
+test['Side'] = cabin_test[2]
+```
+
+```{python}
+# Removing Cabin (extracted) and unique identifier features
+train = train.drop(columns=['Cabin', 'PassengerId', 'Name'])
+test  = test.drop(columns=['Cabin', 'PassengerId', 'Name'])
+```
+
+```{python}
+train.head()
+```
+
+```{python}
+amenities = ['RoomService', 'FoodCourt', 'ShoppingMall', 'Spa', 'VRDeck']
+
+# Train
+train[amenities] = train[amenities].fillna(0)
+zeroamenities = (train[amenities] == 0).all(axis=1)
+train['CryoSleep'] = train['CryoSleep'].fillna(zeroamenities.astype(bool))
+
+# Test
+test[amenities] = test[amenities].fillna(0)
+zeroamenities_test = (test[amenities] == 0).all(axis=1)
+test['CryoSleep'] = test['CryoSleep'].fillna(zeroamenities_test.astype(bool))
+```
+
+```{python}
+amenities = ['RoomService', 'FoodCourt', 'ShoppingMall', 'Spa', 'VRDeck']
+
+# Train
+train[amenities] = train[amenities].fillna(0)
+zeroamenities = (train[amenities] == 0).all(axis=1)
+train['CryoSleep'] = train['CryoSleep'].fillna(zeroamenities.astype(bool))
+
+# Test
+test[amenities] = test[amenities].fillna(0)
+zeroamenities_test = (test[amenities] == 0).all(axis=1)
+test['CryoSleep'] = test['CryoSleep'].fillna(zeroamenities_test.astype(bool))
+```
+
+```{python}
+for col in ['HomePlanet', 'Destination', 'Deck', 'Side']:
+    modes = train[col].mode()[0]
+    train[col] = train[col].fillna(modes)
+    test[col] = test[col].fillna(modes)
+
+# VIP - boolean mode imputation
+train['VIP'] = train['VIP'].fillna(train['VIP'].mode()[0]).astype(bool)
+test['VIP'] = test['VIP'].fillna(train['VIP'].mode()[0]).astype(bool)
+```
+
+
+```{python}
+train[['Age']].plot(kind='hist', bins=40)
+plt.show()
+```
+
+```{python}
+train[['CabinNumber']].plot(kind='hist', bins=40)
+plt.show()
+```
+
+
+```{python}
+# Age
+train['Age'] = train['Age'].fillna(train['Age'].median())
+test['Age'] = test['Age'].fillna(train['Age'].median())
+
+# Cabin number
+train['CabinNumber'] = train['CabinNumber'].fillna(train['CabinNumber'].median())
+test['CabinNumber'] = test['CabinNumber'].fillna(train['CabinNumber'].median())
+```
+
+```{python}
+# Check nulls
+train.isnull().sum()
+```
+
+
+```{python}
+# Check nulls
+test.isnull().sum()
+```
+
+```{python}
+# Boolean encoding
+train['CryoSleep'] = train['CryoSleep'].astype(int)
+train['VIP'] = train['VIP'].astype(int)
+
+test['CryoSleep'] = test['CryoSleep'].astype(int)
+test['VIP'] = test['VIP'].astype(int)
+
+# Encoding remaining categorical variables
+categoricals = ['HomePlanet', 'Destination', 'Deck', 'Side']
+
+train = pd.get_dummies(train, columns=categoricals)
+test = pd.get_dummies(test, columns=categoricals)
+
+train, test = train.align(test, join='left', axis=1)
+```
+
+
+```{python}
+train.head
+```
+
+```{python}
+X = train.drop(columns=['Transported'])
+y = train['Transported'].astype(int)
+X_test = X_test = test.drop(columns=['Transported'])
+```
+
+```{python}
+# Standardizing numeric columns for modelling
+numeric = ['Age', 'RoomService', 'FoodCourt', 'ShoppingMall', 'Spa', 'VRDeck', 'CabinNumber']
+
+standardize = StandardScaler()
+X[numeric] = standardize.fit_transform(X[numeric])
+X_test[numeric] = standardize.transform(X_test[numeric])
+```
+
+```{python}
+decisiontree = DecisionTreeClassifier(max_depth=5, random_state=42)
+decisiontree.fit(X, y)
+
+originals = pd.Series(X.columns.str.split('_').str[0], index=X.columns)
+
+featureimportance = pd.Series(decisiontree.feature_importances_, index=X.columns)
+groupedbyoriginal = featureimportance.groupby(originals).sum().sort_values(ascending=False)
+
+plt.figure(figsize=(10, 6))
+groupedbyoriginal.sort_values().plot(kind='barh')
+plt.title("Feature Importance Scores")
+plt.xlabel("Feature Importance Score")
+plt.ylabel("Feature")
+plt.tight_layout()
+plt.show()
+```
+
+```{python}
+X.to_csv('X.csv', index=False)
+X_test.to_csv('X_test.csv', index=False)
+y.to_csv('y.csv', index=False)
+```
+
+
+#Brandon Bar Plot EDA
+
+
+```{python}
+#Note we are using the raw_train set for the EDA
+
+#Home Planet Bar plot
+counts = raw_train.groupby(['HomePlanet', 'Transported']).size().unstack(fill_value=0)
+counts.plot(kind='bar', width=0.7)
+plt.title('HomePlanet vs Transported')
+plt.xlabel('HomePlanet')
+plt.ylabel('Passenger Count')
+plt.legend(['Not Transported', 'Transported'])
+plt.xticks(rotation=30)
+plt.tight_layout()
+plt.show()
+```
+
+```{python}
+#Note we are using the raw_train set for the EDA
+
+#CryoSleep
+counts = raw_train.groupby(['CryoSleep', 'Transported']).size().unstack(fill_value=0)
+counts.plot(kind='bar', width=0.7)
+plt.title('CryoSleep vs Transported')
+plt.xlabel('CryoSleep')
+plt.ylabel('Passenger Count')
+plt.legend(['Not Transported', 'Transported'])
+plt.xticks(rotation=30)
+plt.tight_layout()
+plt.show()
+```
+
+```{python}
+#Note we are using the raw_train set for the EDA
+
+#Destination
+counts = raw_train.groupby(['Destination', 'Transported']).size().unstack(fill_value=0)
+counts.plot(kind='bar', width=0.7)
+plt.title('Destination vs Transported')
+plt.xlabel('Destination')
+plt.ylabel('Passenger Count')
+plt.legend(['Not Transported', 'Transported'])
+plt.xticks(rotation=30)
+plt.tight_layout()
+plt.show()
+```
+
+
+```{python}
+#Note we are using the raw_train set for the EDA
+
+#VIP
+counts = raw_train.groupby(['VIP', 'Transported']).size().unstack(fill_value=0)
+counts.plot(kind='bar', width=0.7)
+plt.title('VIP vs Transported')
+plt.xlabel('VIP')
+plt.ylabel('Passenger Count')
+plt.legend(['Not Transported', 'Transported'])
+plt.xticks(rotation=30)
+plt.tight_layout()
+plt.show()
+```
+
+```{python}
+#Created split cabin from partners previous code for the raw_train set
+# Split Cabin
+cabin = raw_train['Cabin'].str.split('/', expand=True)
+raw_train['Deck'] = cabin[0]
+raw_train['CabinNumber'] = pd.to_numeric(cabin[1], errors='coerce')
+raw_train['Side'] = cabin[2]
+```
+
+```{python}
+#Note we are using the raw_train set for the EDA
+
+#Deck
+counts = raw_train.groupby(['Deck', 'Transported']).size().unstack(fill_value=0)
+counts.plot(kind='bar', width=0.7)
+plt.title('Deck vs Transported')
+plt.xlabel('Deck')
+plt.ylabel('Passenger Count')
+plt.legend(['Not Transported', 'Transported'])
+plt.xticks(rotation=30)
+plt.tight_layout()
+plt.show()
+
+```
+
+```{python}
+#Note we are using the raw_train set for the EDA
+
+counts = raw_train.groupby(['Side', 'Transported']).size().unstack(fill_value=0)
+counts.plot(kind='bar', width=0.7)
+plt.title('Side vs Transported')
+plt.xlabel('Side')
+plt.ylabel('Passenger Count')
+plt.legend(['Not Transported', 'Transported'])
+plt.xticks(rotation=30)
+plt.tight_layout()
+plt.show()
+```
+
+
+
+#Brandon Correlation Matrix
+
+```{python}
+# Combine X and y for correlation analysis
+train_encoded = X.copy()
+train_encoded['Transported'] = y
+
+# Calculate correlation matrix
+corr = train_encoded.corr()
+
+# Plot heatmap
+plt.figure(figsize=(18, 14))
+plt.imshow(corr, cmap='coolwarm', aspect='auto')
+plt.colorbar()
+plt.xticks(range(len(corr.columns)), corr.columns, rotation=90)
+plt.yticks(range(len(corr.columns)), corr.columns)
+plt.title('Correlation Matrix of Encoded Features')
+plt.tight_layout()
+plt.show()
+
+# Print top correlations with Transported specifically
+print("Top correlations with Transported:")
+print(corr['Transported'].sort_values(ascending=False).to_string())
+```
+
+
+
+
+
+
+
+
