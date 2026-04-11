@@ -56,7 +56,7 @@ The dataset is sourced from Kaggle (the Spaceship Titanic competition), containi
 - Models evaluated using Accuracy, Error Rate, Sensitivity, Precision, and F1, F2, and F0.5 scores
 
 Challenges faced: 
-- Kaggle's original Spaceship Titanic dataset included unlabeled test records and could not be used for model evaluation, so for the purpose of this project, the training data (renamed `spaceship.csv`) was partitioned
+- Kaggle's original Spaceship Titanic dataset included an unlabeled test set which could not be used for model evaluation, so for the purpose of this project, the training set (renamed `spaceship.csv`) was partitioned
 - Regrouping one-hot encoded dummy variables into their original features for the feature importance bar graph's interpretability
 
 ## License
