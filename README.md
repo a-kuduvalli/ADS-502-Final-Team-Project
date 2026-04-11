@@ -43,6 +43,7 @@ Contact:
 The dataset is sourced from Kaggle (the Spaceship Titanic competition), containing 8,693 labeled records. There are 13 independent variables, including passenger information (`PassengerID`, `Name`, `Age`, `HomePlanet`, `Destination`), `CryoSleep`, `Cabin`, and voyage spending (`VIP`, `RoomService`, `FoodCourt`, `ShoppingMall`, `Spa`, `VRDeck`). The target variable is the boolean attribute `PassengerId`, indicating whether a passenger was transported or not. 
 
 ### Pre-processing
+- Dataset partitioned using a 75/25 train-test split
 - All passengers with a `CryoSleep` value of 'True' were assigned 0 for all amenities
 - All passengers with no spending in amenities were assigned 'True' in `Cryosleep`
 - Median (numerical variables) and mode (categorical variables) imputation for the remaining null values
@@ -54,7 +55,9 @@ The dataset is sourced from Kaggle (the Spaceship Titanic competition), containi
 - Classifiers: Decision trees (CART and C5.0), Logistic Regression, Naïve Bayes, Random Forest
 - Models evaluated using Accuracy, Error Rate, Sensitivity, Precision, and F1, F2, and F0.5 scores
 
-Challenges faced: Kaggle's original Spaceship Titanic dataset included unlabeled test records and could not be used for model evaluation. For the purpose of this project, the training data (renamed `spaceship.csv`) was partitioned using a 75/25 train-test split. Other challenges included re-grouping one-hot encoded dummy variables into their original features for the feature importance bar graph's interpretability.
+Challenges faced: 
+- Kaggle's original Spaceship Titanic dataset included unlabeled test records and could not be used for model evaluation, so for the purpose of this project, the training data (renamed `spaceship.csv`) was partitioned
+- Regrouping one-hot encoded dummy variables into their original features for the feature importance bar graph's interpretability
 
 ## License
 [Attribution 4.0 International (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/)
