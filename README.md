@@ -40,7 +40,7 @@ Contact:
 - pandas, numpy, matplotlib, scikit-learn, statsmodels
 
 ## Project Description
-The dataset is sourced from Kaggle (the Spaceship Titanic competition), containing 8,693 training records and 4,300 test records. There are 13 independent variables, including passenger information (`PassengerID`, `Name`, `Age`, `HomePlanet`, `Destination`), `CryoSleep`, `Cabin`, and voyage spending (`VIP`, `RoomService`, `FoodCourt`, `ShoppingMall`, `Spa`, `VRDeck`). The target variable is the boolean attribute `PassengerId`, indicating whether a passenger was transported or not. 
+The dataset is sourced from Kaggle (the Spaceship Titanic competition), containing 8,693 labeled records. There are 13 independent variables, including passenger information (`PassengerID`, `Name`, `Age`, `HomePlanet`, `Destination`), `CryoSleep`, `Cabin`, and voyage spending (`VIP`, `RoomService`, `FoodCourt`, `ShoppingMall`, `Spa`, `VRDeck`). The target variable is the boolean attribute `PassengerId`, indicating whether a passenger was transported or not. 
 
 ### Pre-processing
 - All passengers with a `CryoSleep` value of 'True' were assigned 0 for all amenities
@@ -48,12 +48,11 @@ The dataset is sourced from Kaggle (the Spaceship Titanic competition), containi
 - Median (numerical variables) and mode (categorical variables) imputation for the remaining null values
 - `Cabin` was split into `Deck`, `CabinNumber`, and `Side`
 - Categorical variables were one-hot encoded
-- StandardScaler used to standardize the data
 
 ### Modelling
 - Feature selection done manually, using results from decision-tree based importance bar graph and correlation heatmap
-- Classifiers: CART, C5.0, Logistic Regression, Naïve Bayes, Random Forest
-- Models evaluated using ______
+- Classifiers: Decision trees (CART and C5.0), Logistic Regression, Naïve Bayes, Random Forest
+- Models evaluated using `Accuracy`, `Error Rate`, `Sensitivity`, `Precision`, and `F1`, `F2`, and `F0.5` scores
 
 Challenges faced: Grouping one-hot encoded dummy variables into original features for feature importance bar graph, interpreting results of dummy variables
 
@@ -64,6 +63,3 @@ Challenges faced: Grouping one-hot encoded dummy variables into original feature
 - Professor An Tran, University of San Diego
 - ADS-502: Fundamentals of Data Science, University of San Diego
 - Kaggle - Spaceship Titanic competition dataset
-
-
-
