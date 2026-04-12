@@ -48,7 +48,7 @@ The dataset is sourced from Kaggle (the Spaceship Titanic competition), containi
 - All passengers with no spending in amenities were assigned 'True' in `Cryosleep`
 - Median (numerical variables) and mode (categorical variables) imputation for the remaining null values
 - `Cabin` was split into `Deck`, `CabinNumber`, and `Side`
-- Categorical variables were one-hot encoded
+- Categorical variables were encoded
 
 ### Modelling
 - Feature selection done manually, using results from decision-tree based importance bar graph and correlation heatmap
